@@ -256,6 +256,7 @@ static void notify_mute(USBDriver *usbp) {
  */
 bool audio_volume_control(USBDriver *usbp, uint8_t req, uint8_t ctrl,
                           uint8_t channel, uint16_t length) {
+  int i;
   switch(req) {
   case UAC_REQ_SET_MAX:
   case UAC_REQ_SET_MIN:
@@ -266,21 +267,21 @@ bool audio_volume_control(USBDriver *usbp, uint8_t req, uint8_t ctrl,
     }
   case UAC_REQ_GET_MAX:
     if (ctrl == UAC_FU_VOLUME_CONTROL) {
-      for(int i = 0; i < length; i++)
+      for(i = 0; i < length; i++)
         ((int16_t*)control_data)[i] = 0;
       usbSetupTransfer(usbp, control_data, length, NULL);
       return true;
     }
   case UAC_REQ_GET_MIN:
     if (ctrl == UAC_FU_VOLUME_CONTROL) {
-      for(int i = 0; i < length; i++)
+      for(i = 0; i < length; i++)
         ((int16_t*)control_data)[i] = -96 * 256;
       usbSetupTransfer(usbp, control_data, length, NULL);
       return true;
     }
   case UAC_REQ_GET_RES:
     if (ctrl == UAC_FU_VOLUME_CONTROL) {
-      for(int i = 0; i < length; i++)
+      for(i = 0; i < length; i++)
         ((int16_t*)control_data)[i] = 128;
       usbSetupTransfer(usbp, control_data, length, NULL);
       return true;
