@@ -16,6 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "usbcfg.h"
 #include "ch_test.h"
 
 /*
@@ -92,6 +93,23 @@ int main(void) {
   chSysInit();
 
   /*
+   * Initializes a serial-over-USB CDC driver.
+   */
+  sduObjectInit(&SDU1);
+  sduStart(&SDU1, &serusbcfg);
+
+  /*
+   * Activates the USB driver and then the USB bus pull-up on D+.
+   * Note, a delay is inserted in order to not have to disconnect the cable
+   * after a reset.
+   */
+  usbDisconnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(1000);
+  usbStart(serusbcfg.usbp, &usbcfg);
+  usbConnectBus(serusbcfg.usbp);
+  chThdSleepMilliseconds(1000);
+
+  /*
    * Activates the serial driver 1 using the driver default configuration.
    * PA9(TX) and PA10(RX) are routed to USART1.
    */
@@ -111,8 +129,10 @@ int main(void) {
    * pressed the test procedure is launched.
    */
   while (true) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
-      test_execute((BaseSequentialStream *)&SD1);
+    if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+      //test_execute((BaseSequentialStream *)&SD1);
+      test_execute((BaseSequentialStream *)&SDU1);
+    }
     chThdSleepMilliseconds(500);
   }
 }
