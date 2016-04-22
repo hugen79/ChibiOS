@@ -17,7 +17,23 @@
 #include "ch.h"
 #include "hal.h"
 #include "usbcfg.h"
+#include "shell.h"
 #include "ch_test.h"
+
+/*===========================================================================*/
+/* Command line related.                                                     */
+/*===========================================================================*/
+
+#define SHELL_WA_SIZE   THD_WORKING_AREA_SIZE(2048)
+
+static const ShellCommand commands[] = {
+  {NULL, NULL}
+};
+
+static const ShellConfig shell_cfg1 = {
+  (BaseSequentialStream *)&SDU1,
+  commands
+};
 
 /*
  * Blinker thread #1.
@@ -107,7 +123,11 @@ int main(void) {
   chThdSleepMilliseconds(1000);
   usbStart(serusbcfg.usbp, &usbcfg);
   usbConnectBus(serusbcfg.usbp);
-  chThdSleepMilliseconds(1000);
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -129,10 +149,18 @@ int main(void) {
    * pressed the test procedure is launched.
    */
   while (true) {
+    if (SDU1.config->usbp->state == USB_ACTIVE) {
+      thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                              "shell", NORMALPRIO + 1,
+                                              shellThread, (void *)&shell_cfg1);
+      chThdWait(shelltp);               /* Waiting termination.             */
+    }
+#if 0
     if (palReadPad(GPIOA, GPIOA_BUTTON)) {
       //test_execute((BaseSequentialStream *)&SD1);
       test_execute((BaseSequentialStream *)&SDU1);
     }
+#endif
     chThdSleepMilliseconds(500);
   }
 }
