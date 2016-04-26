@@ -39,8 +39,7 @@
 #define STM32_I2S_MODE_MASTER               1
 #define STM32_I2S_MODE_RX                   2
 #define STM32_I2S_MODE_TX                   4
-#define STM32_I2S_MODE_RXTX                 (STM32_I2S_MODE_RX |            \
-                                             STM32_I2S_MODE_TX)
+#define STM32_I2S_MODE_FULLDUPLEX           8
 /** @} */
 
 /**
@@ -50,6 +49,7 @@
 #define STM32_I2S_IS_MASTER(mode)           ((mode) & STM32_I2S_MODE_MASTER)
 #define STM32_I2S_RX_ENABLED(mode)          ((mode) & STM32_I2S_MODE_RX)
 #define STM32_I2S_TX_ENABLED(mode)          ((mode) & STM32_I2S_MODE_TX)
+#define STM32_I2S_FULLDUPLEX_ENABLED(mode)  ((mode) & STM32_I2S_MODE_FULLDUPLEX)
 /** @} */
 
 /*===========================================================================*/
@@ -372,9 +372,17 @@ struct I2SDriver {
    */
   SPI_TypeDef               *spi;
   /**
+   * @brief   Pointer to the I2SxExt registers block.
+   */
+  SPI_TypeDef               *i2sext;
+  /**
    * @brief   Calculated part of the I2SCFGR register.
    */
   uint16_t                  cfg;
+  /**
+   * @brief   Calculated part of the I2SCFGR register of I2SxExt.
+   */
+  uint16_t                  extcfg;
   /**
    * @brief   Receive DMA stream or @p NULL.
    */
@@ -391,6 +399,14 @@ struct I2SDriver {
    * @brief   TX DMA mode bit mask.
    */
   uint32_t                  txdmamode;
+  /**
+   * @brief   RX DMA transfer DR
+   */
+  uint32_t                  rx_dr;
+  /**
+   * @brief   TX DMA transfer DR
+   */
+  uint32_t                  tx_dr;
 };
 
 /*===========================================================================*/
