@@ -331,9 +331,13 @@ typedef struct {
    */
   size_t                    size;
   /**
-   * @brief   Callback function called during streaming.
+   * @brief   Callback function called during streaming of TX.
    */
-  i2scallback_t             end_cb;
+  i2scallback_t             tx_end_cb;
+  /**
+   * @brief   Callback function called during streaming of RX.
+   */
+  i2scallback_t             rx_end_cb;
   /* End of the mandatory fields.*/
   /**
    * @brief   Configuration of the I2SCFGR register.

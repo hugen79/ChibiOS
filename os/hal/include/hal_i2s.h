@@ -110,9 +110,27 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2s_isr_half_code(i2sp) {                                          \
-  if ((i2sp)->config->end_cb != NULL) {                                     \
-    (i2sp)->config->end_cb(i2sp, 0, (i2sp)->config->size / 2);              \
+#define _i2s_isr_half_code_tx(i2sp) {                                          \
+  if ((i2sp)->config->tx_end_cb != NULL) {                                     \
+    (i2sp)->config->tx_end_cb(i2sp, 0, (i2sp)->config->size / 2);              \
+  }                                                                         \
+}
+
+/**
+ * @brief   Common ISR code, half buffer event.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] i2sp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2s_isr_half_code_rx(i2sp) {                                          \
+  if ((i2sp)->config->rx_end_cb != NULL) {                                     \
+    (i2sp)->config->rx_end_cb(i2sp, 0, (i2sp)->config->size / 2);              \
   }                                                                         \
 }
 
@@ -129,10 +147,36 @@ typedef enum {
  *
  * @notapi
  */
-#define _i2s_isr_full_code(i2sp) {                                               \
-  if ((i2sp)->config->end_cb) {                                             \
+#define _i2s_isr_full_code_tx(i2sp) {                                               \
+  if ((i2sp)->config->tx_end_cb) {                                             \
     (i2sp)->state = I2S_COMPLETE;                                           \
-    (i2sp)->config->end_cb(i2sp,                                            \
+    (i2sp)->config->tx_end_cb(i2sp,                                            \
+                           (i2sp)->config->size / 2,                        \
+                           (i2sp)->config->size / 2);                       \
+    if ((i2sp)->state == I2S_COMPLETE)                                      \
+      (i2sp)->state = I2S_READY;                                            \
+  }                                                                         \
+  else                                                                      \
+    (i2sp)->state = I2S_READY;                                              \
+}
+
+/**
+ * @brief   Common ISR code.
+ * @details This code handles the portable part of the ISR code:
+ *          - Callback invocation.
+ *          - Driver state transitions.
+ *          .
+ * @note    This macro is meant to be used in the low level drivers
+ *          implementation only.
+ *
+ * @param[in] i2sp      pointer to the @p I2CDriver object
+ *
+ * @notapi
+ */
+#define _i2s_isr_full_code_rx(i2sp) {                                               \
+  if ((i2sp)->config->rx_end_cb) {                                             \
+    (i2sp)->state = I2S_COMPLETE;                                           \
+    (i2sp)->config->rx_end_cb(i2sp,                                            \
                            (i2sp)->config->size / 2,                        \
                            (i2sp)->config->size / 2);                       \
     if ((i2sp)->state == I2S_COMPLETE)                                      \
