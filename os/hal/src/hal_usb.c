@@ -437,7 +437,7 @@ void usbStartReceiveI(USBDriver *usbp, usbep_t ep,
 
   osalDbgCheckClassI();
   osalDbgCheck((usbp != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
-  osalDbgAssert(!usbGetReceiveStatusI(usbp, ep), "already receiving");
+  //osalDbgAssert(!usbGetReceiveStatusI(usbp, ep), "already receiving");
 
   /* Marking the endpoint as active.*/
   usbp->receiving |= (uint16_t)((unsigned)1U << (unsigned)ep);
@@ -476,7 +476,7 @@ void usbStartTransmitI(USBDriver *usbp, usbep_t ep,
 
   osalDbgCheckClassI();
   osalDbgCheck((usbp != NULL) && (ep <= (usbep_t)USB_MAX_ENDPOINTS));
-  osalDbgAssert(!usbGetTransmitStatusI(usbp, ep), "already transmitting");
+  //osalDbgAssert(!usbGetTransmitStatusI(usbp, ep), "already transmitting");
 
   /* Marking the endpoint as active.*/
   usbp->transmitting |= (uint16_t)((unsigned)1U << (unsigned)ep);
