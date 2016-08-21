@@ -335,7 +335,8 @@ void dac_lld_put_channel(DACDriver *dacp,
   case DAC_DHRM_12BIT_RIGHT_DUAL:
 #endif
     if (channel == 0U) {
-      dacp->params->dac->DHR12R1 = (uint32_t)sample;
+      *(&dacp->params->dac->DHR12R1 + dacp->params->dataoffset) = (uint32_t)sample;
+      //dacp->params->dac->DHR12R1 = (uint32_t)sample;
     }
     else {
       dacp->params->dac->DHR12R2 = (uint32_t)sample;
@@ -346,7 +347,8 @@ void dac_lld_put_channel(DACDriver *dacp,
   case DAC_DHRM_12BIT_LEFT_DUAL:
 #endif
     if (channel == 0U) {
-      dacp->params->dac->DHR12L1 = (uint32_t)sample;
+      *(&dacp->params->dac->DHR12L1 + dacp->params->dataoffset) = (uint32_t)sample;
+      //dacp->params->dac->DHR12L1 = (uint32_t)sample;
     }
     else {
       dacp->params->dac->DHR12L2 = (uint32_t)sample;

@@ -67,7 +67,14 @@
 #define STM32_DAC1_CH1_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 3)
 #define STM32_DAC1_CH1_DMA_CHN              0x00000000
 
+#if defined(STM32F072xB)
+#define STM32_HAS_DAC1_CH2                  TRUE
+#define STM32_DAC1_CH2_DMA_MSK              STM32_DMA_STREAM_ID_MSK(1, 4)
+#define STM32_DAC1_CH2_DMA_CHN              0x00000000
+#else
 #define STM32_HAS_DAC1_CH2                  FALSE
+#endif
+
 #define STM32_HAS_DAC2_CH1                  FALSE
 #define STM32_HAS_DAC2_CH2                  FALSE
 
