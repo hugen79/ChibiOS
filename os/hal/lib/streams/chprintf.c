@@ -118,7 +118,6 @@ static char *ftoa(char *p, double num, unsigned long precision) {
  *
  * @api
  */
-static char tmpbuf[24];
 int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   char *p, *s, c, filler;
   int i, precision, width;
@@ -127,9 +126,9 @@ int chvprintf(BaseSequentialStream *chp, const char *fmt, va_list ap) {
   long l;
 #if CHPRINTF_USE_FLOAT
   float f;
-  //char tmpbuf[2*MAX_FILLER + 1];
+  char tmpbuf[2*MAX_FILLER + 1];
 #else
-  //char tmpbuf[MAX_FILLER + 1];
+  char tmpbuf[MAX_FILLER + 1];
 #endif
 
   while (true) {
